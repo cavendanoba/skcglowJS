@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKC Glow - Belleza & Maquillaje</title>
+
+    <!-- Tailwind v4 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- AOS Animations -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap">
+
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#0f0f0f] text-white">
+
+    <!-- -------------------------------------- -->
+    <!-- HEADER -->
+    <!-- -------------------------------------- -->
+    <header class="fixed top-0 left-0 w-full bg-black/80 backdrop-blur-md z-50 shadow-xl">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="assets/logo-ico-transp.png" alt="SKC Glow" class="w-10 h-10 mr-3">
+                <h1 class="text-3xl font-bold text-[#F8BBD0] drop-shadow-[0_0_8px_#EC407A]">SKC Glow</h1>
+            </div>
+
+            <nav class="hidden md:flex gap-8 text-pink-200">
+                <a href="#productos" class="hover:text-white">Productos</a>
+                <a href="#cajas" class="hover:text-white">Cajas Navideñas</a>
+                <a href="#valores" class="hover:text-white">Nosotros</a>
+                <a href="#pagos" class="hover:text-white">Pagos</a>
+                <a href="javascript:carrito()" class="hover:text-white">Carrito</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="h-20"></div>
+
+    <!-- -------------------------------------- -->
+    <!-- HERO -->
+    <!-- -------------------------------------- -->
+    <section
+        class="bg-gradient-to-br from-[#F8BBD0] to-[#EC407A] text-black py-28 text-center relative overflow-hidden">
+
+        <h2 class="text-5xl font-extrabold mb-6" data-aos="zoom-in">
+            <span id="typed"></span>
+        </h2>
+
+        <p class="text-lg max-w-2xl mx-auto" data-aos="fade-up">
+            Marcas originales, precios increíbles, estilo que te acompaña.
+        </p>
+
+        <a href="#productos"
+            class="inline-block mt-8 bg-[#0f0f0f] text-white px-8 py-3 rounded-full text-lg font-semibold transition hover:bg-[#EC407A]">
+            Ver Catálogo
+        </a>
+    </section>
+
+    <!-- -------------------------------------- -->
+    <!-- CATÁLOGO -->
+    <!-- -------------------------------------- -->
+    <section id="productos" class="max-w-7xl mx-auto px-6 py-16">
+
+        <h3 class="text-4xl font-bold text-center mb-12 text-[#F6E27F]" data-aos="fade-up">
+            Nuestro Catálogo
+        </h3>
+
+        <div id="catalog" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+
+            <!-- Producto genérico (se repite) -->
+            <template id="product-card-template">
+                <div class="bg-[#F8BBD0] rounded-2xl shadow-xl p-4 text-black border border-yellow-200"
+                    data-aos="zoom-in">
+                    <img src="assets/placeholder-product.jpg" class="w-full h-32 object-cover rounded-xl mb-3">
+                    <h4 class="font-bold text-lg">Producto</h4>
+                    <p class="text-sm text-gray-700">Descripción breve.</p>
+                    <p class="font-bold mt-2 text-[#EC407A]">$35.000</p>
+                    <button class="w-full mt-3 bg-black text-white py-2 rounded-xl hover:bg-[#EC407A] add-to-cart">
+                        Agregar al carrito
+                    </button>
+                </div>
+            </template>
+
+            <!-- El catálogo será renderizado desde `catalog.js` -->
+        </div>
+    </section>
+
+    <!-- -------------------------------------- -->
+    <!-- CAJAS DE REGALO -->
+    <!-- -------------------------------------- -->
+    <section id="cajas" class="py-20 bg-[#0f0f0f]">
+        <h3 class="text-4xl font-bold text-center text-[#F6E27F] mb-12" data-aos="fade-up">
+            Cajas de Regalo Personalizadas 🎁
+        </h3>
+
+        <p class="max-w-3xl mx-auto text-center text-gray-300 mb-10" data-aos="fade-up">
+            Elige productos individuales o nuestras cajas pre-armadas con diseños navideños.
+            El regalo perfecto para sorprender con estilo.
+        </p>
+
+        <div class="max-w-5xl mx-auto text-center">
+            <img src="assets/placeholder-product.jpg"
+                class="mx-auto w-64 rounded-3xl shadow-2xl border-2 border-yellow-300" data-aos="zoom-in">
+        </div>
+    </section>
+
+    <!-- -------------------------------------- -->
+    <!-- VALORES -->
+    <!-- -------------------------------------- -->
+    <section id="valores" class="max-w-6xl mx-auto px-6 py-20">
+        <h3 class="text-4xl font-bold text-center text-[#F6E27F] mb-12" data-aos="fade-up">Nuestro Propósito</h3>
+
+        <div class="grid md:grid-cols-2 gap-10 items-center">
+
+            <img src="assets/logo-skcglow.png"
+                class="rounded-3xl shadow-xl border border-yellow-200 w-full h-80 object-cover" data-aos="fade-right">
+
+            <div data-aos="fade-left">
+                <p class="text-gray-300 leading-relaxed text-lg">
+                    Desde la ingeniería y la administración construimos un emprendimiento basado en:
+                    <br><br>
+                    ⭐ Optimización continúa
+                    ⭐ Servicio al cliente de alta calidad
+                    ⭐ Procesos eficientes
+                    ⭐ Análisis de mercado real
+                    ⭐ Innovación constante para ofrecer siempre los mejores precios
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- -------------------------------------- -->
+    <!-- MÉTODOS DE PAGO -->
+    <!-- -------------------------------------- -->
+    <section id="pagos" class="bg-black py-20">
+        <h3 class="text-4xl font-bold text-center text-[#F6E27F] mb-10" data-aos="fade-up">
+            Métodos de Pago
+        </h3>
+
+        <div class="max-w-4xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+
+            <div class="p-6 bg-[#F8BBD0] text-black rounded-2xl shadow-xl border border-yellow-200" data-aos="zoom-in">
+                Nequi
+            </div>
+
+            <div class="p-6 bg-[#F8BBD0] text-black rounded-2xl shadow-xl border border-yellow-200" data-aos="zoom-in">
+                Daviplata
+            </div>
+
+            <div class="p-6 bg-[#F8BBD0] text-black rounded-2xl shadow-xl border border-yellow-200" data-aos="zoom-in">
+                Transferencia Bancaria
+            </div>
+
+            <div class="p-6 bg-[#EC407A] text-white rounded-2xl shadow-xl border border-yellow-200 font-bold"
+                data-aos="zoom-in">
+                Contraentrega Bogotá / Soacha
+            </div>
+
+        </div>
+    </section>
+
+    <!-- -------------------------------------- -->
+    <!-- FOOTER -->
+    <!-- -------------------------------------- -->
+    <footer class="bg-black py-10 text-center text-gray-400">
+        <p>Atención 24/7 – SKC Glow © 2025</p>
+        <div class="flex justify-center gap-6 mt-4 text-2xl">
+            <a href="#" class="hover:text-white">📸</a>
+            <a href="#" class="hover:text-white">🎵</a>
+        </div>
+    </footer>
+
+    <!-- -------------------------------------- -->
+    <!-- BOTONES FLOTANTES -->
+    <!-- -------------------------------------- -->
+    <!-- WHATSAPP BUTTON -->
+     <a href="https://wa.me/573192973372"
+         class="fixed" style="bottom:6rem;right:1.5rem;z-index:40;background-color:#EC407A;width:4rem;height:4rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.875rem;box-shadow:0 10px 15px -3px #EC407A;" target="_blank">
+        💬
+    </a>
+
+    <!-- CART BUTTON  -->
+    <button id="openCart"
+        class="fixed bottom-6 right-6 bg-[#EC407A] hover:bg-[#F8BBD0] text-white p-4 rounded-full shadow-xl text-xl z-50">
+        🛒
+    </button>
+    
+    <!-- -------------------------------------- -->
+    <!-- BOTONES FLOTANTES -->
+    <!-- -------------------------------------- -->
+
+    <!-- Carrito Sidebar -->
+    <div id="cartSidebar"
+        class="fixed top-0 right-0 w-80 h-full bg-[#0f0f0f] text-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
+        <div class="p-4 flex justify-between items-center border-b border-gray-700">
+            <h2 class="text-xl font-bold text-[#F8BBD0]">Tu carrito</h2>
+            <button id="closeCart" class="text-white text-2xl">&times;</button>
+        </div>
+
+        <div id="cartItems" class="p-4 space-y-4 max-h-[70vh] overflow-y-auto"></div>
+
+        <div class="p-4 border-t border-gray-700">
+            <p class="text-lg mb-2">Total: <span id="cartTotal" class="font-bold text-[#F6E27F]">$0</span></p>
+
+            <button id="checkoutBtn"
+                class="w-full bg-[#EC407A] hover:bg-[#F8BBD0] text-black font-bold py-2 rounded-xl transition">
+                Finalizar pedido
+            </button>
+
+            <button id="clearCart"
+                class="w-full mt-2 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-xl transition">
+                Vaciar carrito
+            </button>
+        </div>
+    </div>
+
+    <!-- Aside del carrito -->
+
+    <!-- Cargamos la app como módulo: inicializa AOS/Typed y renderiza el catálogo -->
+    <script type="module" src="app.js"></script>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>

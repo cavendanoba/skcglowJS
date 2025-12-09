@@ -1,0 +1,99 @@
+// cart-view.js
+// ----------------------------------------------------------
+//   Renderiza el carrito y maneja los botones del contenido
+// ----------------------------------------------------------
+
+import { 
+    getCart,
+    getCartTotal,
+    addToCart,
+    decreaseFromCart,
+    removeFromCart,
+    clearCart
+} from "./cart.js";
+
+/**
+ * Renderiza el contenido del carrito dentro del contenedor
+ * con id="cart-container".
+ */
+export function renderCart() {
+    const cart = getCart();
+    const container = document.getElementById("cart-container");
+
+    if (!container) return;
+
+    if (cart.length === 0) {
+        container.innerHTML = `
+            <p class="empty-cart">Tu carrito está vacío 🛒</p>
+        `;
+        return;
+    }
+
+    let html = `
+        <h2>Tu Carrito</h2>
+        <div class="cart-items">
+    `;
+
+    cart.forEach(item => {
+        html += `
+            <div class="cart-item">
+                <div>
+                    <p class="item-name">${item.name}</p>
+                    <p class="item-price">$${item.price.toLocaleString()}</p>
+                    <p class="item-qty">Cantidad: ${item.quantity}</p>
+                </div>
+
+                <div class="cart-controls">
+                    <button class="btn-qty" data-action="decrease" data-id="${item.id}">-</button>
+                    <button class="btn-qty" data-action="increase" data-id="${item.id}">+</button>
+                    <button class="btn-remove" data-action="remove" data-id="${item.id}">Eliminar</button>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `
+        </div>
+
+        <div class="cart-footer">
+            <h3>Total: $${getCartTotal().toLocaleString()}</h3>
+            <button id="btn-clear-cart" class="btn-clear">Vaciar carrito</button>
+        </div>
+    `;
+
+    container.innerHTML = html;
+
+    attachCartEvents();
+}
+
+/**
+ * Conecta los botones generados (dinámicos)
+ */
+function attachCartEvents() {
+    document.querySelectorAll(".btn-qty").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const id = parseInt(btn.dataset.id);
+            const action = btn.dataset.action;
+
+            if (action === "increase") addToCart({ id });
+            if (action === "decrease") decreaseFromCart(id);
+
+            renderCart();
+        });
+    });
+
+    document.querySelectorAll(".btn-remove").forEach(btn => {
+        btn.addEventListener("click", () => {
+            removeFromCart(parseInt(btn.dataset.id));
+            renderCart();
+        });
+    });
+
+    const btnClear = document.getElementById("btn-clear-cart");
+    if (btnClear) {
+        btnClear.addEventListener("click", () => {
+            clearCart();
+            renderCart();
+        });
+    }
+}
