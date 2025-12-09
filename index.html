@@ -23,6 +23,17 @@
         body {
             font-family: "Poppins", sans-serif;
         }
+
+        /* Blur-up effect para lazy loading */
+        .blur-image {
+            filter: blur(10px);
+            transition: filter 0.5s ease-out, opacity 0.5s ease-out;
+        }
+
+        .blur-image.loaded {
+            filter: blur(0);
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -126,7 +137,7 @@
 
         <div class="grid md:grid-cols-2 gap-10 items-center">
 
-            <img src="assets/logo-skcglow.png"
+            <img src="assets/logo-full-transp.png"
                 class="rounded-3xl shadow-xl border border-yellow-200 w-full h-80 object-cover" data-aos="fade-right">
 
             <div data-aos="fade-left">
@@ -179,9 +190,13 @@
     <!-- -------------------------------------- -->
     <footer class="bg-black py-10 text-center text-gray-400">
         <p>Atención 24/7 – SKC Glow © 2025</p>
-        <div class="flex justify-center gap-6 mt-4 text-2xl">
-            <a href="#" class="hover:text-white">📸</a>
-            <a href="#" class="hover:text-white">🎵</a>
+        <div class="flex justify-center gap-6 mt-4">
+            <a href="https://www.instagram.com/" target="_blank" class="hover:opacity-80 transition">
+                <img src="assets/ig-ico.png" alt="Instagram" class="w-8 h-8">
+            </a>
+            <a href="https://www.tiktok.com/" target="_blank" class="hover:opacity-80 transition">
+                <img src="assets/tk-ico.png" alt="TikTok" class="w-8 h-8">
+            </a>
         </div>
     </footer>
 
@@ -190,8 +205,8 @@
     <!-- -------------------------------------- -->
     <!-- WHATSAPP BUTTON -->
      <a href="https://wa.me/573192973372"
-         class="fixed" style="bottom:6rem;right:1.5rem;z-index:40;background-color:#EC407A;width:4rem;height:4rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.875rem;box-shadow:0 10px 15px -3px #EC407A;" target="_blank">
-        💬
+         class="fixed" style="bottom:6rem;right:1.5rem;z-index:40;display:flex;align-items:center;justify-content:center;" target="_blank">
+        <img src="assets/ws-ico.png" alt="WhatsApp" class="w-16 h-16 hover:scale-110 transition">
     </a>
 
     <!-- CART BUTTON  -->

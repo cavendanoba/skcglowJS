@@ -2,15 +2,71 @@
 import { products } from "./products.js";
 import { addToCart } from "./cart.js";
 
+// Obtener catálogo actual (prefiere localStorage si fue modificado desde admin)
+function getCatalog() {
+    try {
+        const s = localStorage.getItem('skcCatalog');
+        if (s) return JSON.parse(s);
+    } catch (e) {
+        console.warn('No se pudo leer skcCatalog desde localStorage', e);
+    }
+    return products;
+}
+
 // Función para manejar el fallback de imágenes
 function handleImageError(img) {
     img.src = 'assets/logo-ico.png';
     img.onerror = null; // Evita loop infinito
 }
 
+// Crear un placeholder borroso (blur-up effect)
+function createBlurPlaceholder(color = '#EC407A') {
+    // Retorna un SVG base64 que actúa como placeholder borroso
+    const svg = `
+        <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="blur">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" />
+                </filter>
+            </defs>
+            <rect width="400" height="400" fill="${color}" opacity="0.3" filter="url(#blur)"/>
+        </svg>
+    `;
+    return 'data:image/svg+xml;base64,' + btoa(svg);
+}
+
+// Observar imágenes para lazy loading con blur-up
+function setupLazyLoadingWithBlur() {
+    const images = document.querySelectorAll('img[data-lazy-src]');
+    
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.lazySrc;
+                    img.removeAttribute('data-lazy-src');
+                    img.classList.add('loaded'); // Trigger fade-in animation
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '50px' // Cargar 50px antes de ser visible
+        });
+        
+        images.forEach(img => imageObserver.observe(img));
+    } else {
+        // Fallback para navegadores sin IntersectionObserver
+        images.forEach(img => {
+            img.src = img.dataset.lazySrc;
+            img.removeAttribute('data-lazy-src');
+        });
+    }
+}
+
 // Función para mostrar el modal del producto con SweetAlert2
 export function showProductModal(productId, cartCallback) {
-    const product = products.find(p => p.id === productId);
+    const product = getCatalog().find(p => p.id === productId);
     if (!product) return;
 
     Swal.fire({
@@ -56,14 +112,22 @@ export function renderCatalog(containerId) {
 
     container.innerHTML = ""; // Limpia por si se recarga
 
-    products.forEach(product => {
+    const catalog = getCatalog();
+    catalog.forEach(product => {
         const card = document.createElement("div");
         card.className = "bg-[#F8BBD0] rounded-2xl shadow-xl p-4 text-black border border-yellow-200 flex flex-col h-full";
         card.style.cursor = "pointer";
         card.dataset.productId = product.id;
 
         card.innerHTML = `
-            <img src="${product.image || 'assets/placeholder-product.jpg'}" class="w-full h-32 object-cover rounded-xl mb-3 cursor-pointer hover:opacity-80 transition" alt="${product.name}" onerror="handleImageError(this)" data-product-id="${product.id}" style="cursor: pointer;">
+            <img src="${createBlurPlaceholder('#EC407A')}" 
+                 data-lazy-src="${product.image || 'assets/logo-ico.png'}" 
+                 class="w-full h-32 object-cover rounded-xl mb-3 cursor-pointer hover:opacity-80 transition blur-image" 
+                 alt="${product.name}" 
+                 onerror="handleImageError(this)" 
+                 data-product-id="${product.id}" 
+                 loading="lazy"
+                 style="cursor: pointer;">
             <div class="flex-1 flex flex-col justify-between">
                 <div>
                     <h4 class="font-bold text-lg">${product.name}</h4>
@@ -95,7 +159,7 @@ export function renderCatalog(containerId) {
         // Si se clickea en el botón "Agregar al carrito"
         if (!btn) return;
         const id = parseInt(btn.dataset.id, 10);
-        const product = products.find(p => p.id === id);
+        const product = getCatalog().find(p => p.id === id);
         if (product) {
             addToCart(product);
             if (product.stock < 2) {
@@ -108,4 +172,7 @@ export function renderCatalog(containerId) {
             }
         }
     });
+    
+    // Inicializar lazy loading con blur-up
+    setupLazyLoadingWithBlur();
 }

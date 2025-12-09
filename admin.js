@@ -1,12 +1,21 @@
 import { products } from './products.js';
 
-let catalog = [...products];
+// Cargar catálogo desde localStorage si existe, si no usar products.js
+const stored = localStorage.getItem('skcCatalog');
+let catalog = stored ? JSON.parse(stored) : [...products];
 
 const panel = document.getElementById('admin-panel');
 
+function saveCatalog() {
+    localStorage.setItem('skcCatalog', JSON.stringify(catalog));
+}
+
 function renderAdminPanel() {
     panel.innerHTML = `
-        <button class="mb-4 px-4 py-2 bg-[#EC407A] text-white rounded" id="add-product">Agregar producto</button>
+        <div class="flex gap-2 mb-4">
+            <button class="px-4 py-2 bg-[#EC407A] text-white rounded" id="add-product">Agregar producto</button>
+            <button class="px-4 py-2 bg-[#10B981] text-white rounded" id="register-sale">Registrar venta</button>
+        </div>
         <table class="w-full text-sm border">
             <thead>
                 <tr class="bg-[#F8BBD0]">
@@ -35,6 +44,7 @@ function renderAdminPanel() {
     `;
 
     document.getElementById('add-product').onclick = () => showAddProduct();
+    document.getElementById('register-sale').onclick = () => showRegisterSale();
     panel.querySelectorAll('.edit-btn').forEach(btn => btn.onclick = () => showEditProduct(btn.dataset.id));
     panel.querySelectorAll('.delete-btn').forEach(btn => btn.onclick = () => deleteProduct(btn.dataset.id));
 }
@@ -63,6 +73,7 @@ function showAddProduct() {
         if (result.isConfirmed && result.value) {
             const newId = Math.max(...catalog.map(p => p.id)) + 1;
             catalog.push({ id: newId, name: result.value.name, price: result.value.price, stock: result.value.stock });
+            saveCatalog();
             renderAdminPanel();
             Swal.fire('Agregado', 'Producto agregado correctamente', 'success');
         }
@@ -96,6 +107,7 @@ function showEditProduct(id) {
             product.name = result.value.name;
             product.price = result.value.price;
             product.stock = result.value.stock;
+            saveCatalog();
             renderAdminPanel();
             Swal.fire('Guardado', 'Producto actualizado', 'success');
         }
@@ -115,8 +127,55 @@ function deleteProduct(id) {
     }).then(result => {
         if (result.isConfirmed) {
             catalog = catalog.filter(p => p.id != id);
+            saveCatalog();
             renderAdminPanel();
             Swal.fire('Eliminado', 'Producto eliminado', 'success');
+        }
+    });
+}
+
+// Registrar una venta: seleccionar producto y cantidad, disminuir stock y guardar
+function showRegisterSale() {
+    const options = catalog.map(p => `<option value="${p.id}">${p.name} (stock: ${p.stock})</option>`).join('');
+
+    Swal.fire({
+        title: 'Registrar venta',
+        html: `
+            <select id="swal-prod" class="swal2-input">${options}</select>
+            <input id="swal-qty" class="swal2-input" type="number" min="1" value="1" placeholder="Cantidad vendida">
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Registrar',
+        preConfirm: () => {
+            const id = parseInt(document.getElementById('swal-prod').value, 10);
+            const qty = parseInt(document.getElementById('swal-qty').value, 10);
+            if (isNaN(id) || isNaN(qty) || qty <= 0) {
+                Swal.showValidationMessage('Selecciona producto y cantidad válida');
+                return false;
+            }
+            return { id, qty };
+        }
+    }).then(result => {
+        if (result.isConfirmed && result.value) {
+            const { id, qty } = result.value;
+            const prod = catalog.find(p => p.id === id);
+            if (!prod) return Swal.fire('Error', 'Producto no encontrado', 'error');
+
+            const prevStock = prod.stock;
+            prod.stock = Math.max(0, prod.stock - qty);
+            saveCatalog();
+            renderAdminPanel();
+
+            Swal.fire('Venta registrada', `${prod.name}: ${qty} unidad(es) vendida(s). Stock: ${prevStock} → ${prod.stock}`, 'success');
+
+            if (prod.stock < 2) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¡Stock bajo!',
+                    text: `Queda poco stock de ${prod.name} (${prod.stock} unidades)`,
+                    confirmButtonColor: '#EC407A'
+                });
+            }
         }
     });
 }
