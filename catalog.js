@@ -15,8 +15,16 @@ function getCatalog() {
 
 // Función para manejar el fallback de imágenes
 function handleImageError(img) {
-    img.src = 'assets/logo-ico.png';
+    img.src = 'assets/default.png';
     img.onerror = null; // Evita loop infinito
+}
+
+// Exponer fallback globalmente por si aún hay handlers inline en el HTML
+if (typeof window !== 'undefined') {
+    window.handleImageError = function(img) {
+        img.src = 'assets/default.png';
+        img.onerror = null;
+    };
 }
 
 // Crear un placeholder borroso (blur-up effect)
@@ -73,12 +81,12 @@ export function showProductModal(productId, cartCallback) {
         title: product.name,
         html: `
             <div style="text-align: center;">
-                <img src="${product.image || 'assets/logo-ico.png'}" 
+                 <img src="${product.image || 'assets/default.png'}" 
                      alt="${product.name}" 
                      style="max-width: 100%; max-height: 400px; border-radius: 10px; margin: 10px auto; display: block;"
-                     onerror="this.src='assets/logo-ico.png'">
+                     onerror="this.src='assets/default.png'">
                 <p style="margin: 15px 0; font-size: 14px; color: #666;">${product.description || 'Sin descripción disponible'}</p>
-                <p style="font-weight: bold; color: #EC407A; margin: 10px 0;">Precio: $${product.price.toLocaleString()}</p>
+                <p style="font-weight: bold; color: #EC407A; margin: 10px 0; font-size: 1.125rem;">Precio: $${product.price.toLocaleString()}</p>
                 <p style="margin: 5px 0; font-size: 13px;">Stock disponible: ${product.stock}</p>
             </div>
         `,
@@ -120,22 +128,24 @@ export function renderCatalog(containerId) {
         card.dataset.productId = product.id;
 
         card.innerHTML = `
-            <img src="${createBlurPlaceholder('#EC407A')}" 
-                 data-lazy-src="${product.image || 'assets/logo-ico.png'}" 
-                 class="w-full h-32 object-cover rounded-xl mb-3 cursor-pointer hover:opacity-80 transition blur-image" 
+              <img src="${createBlurPlaceholder('#EC407A')}" 
+                  data-lazy-src="${product.image || 'assets/default.png'}" 
+                 class="w-full object-cover rounded-xl mb-3 cursor-pointer hover:opacity-80 transition blur-image" 
                  alt="${product.name}" 
-                 onerror="handleImageError(this)" 
+                 onerror="this.src='assets/default.png'; this.onerror=null;" 
                  data-product-id="${product.id}" 
                  loading="lazy"
-                 style="cursor: pointer;">
+                 style="cursor: pointer; height: calc(8rem * 1.05);">
             <div class="flex-1 flex flex-col justify-between">
                 <div>
-                    <h4 class="font-bold text-lg">${product.name}</h4>
+                    <div class="flex items-start justify-between">
+                        <h4 class="font-bold text-lg">${product.name}</h4>
+                        <p class="font-bold text-xl mt-0 text-[#EC407A]">$${product.price.toLocaleString()}</p>
+                    </div>
                     <p class="text-sm text-gray-700 mt-2">${product.description || 'Sin descripción'}</p>
                     <p class="text-sm text-gray-700">Stock: ${product.stock}</p>
-                    <p class="font-bold mt-2 text-[#EC407A]">$${product.price.toLocaleString()}</p>
                 </div>
-                <button class="w-full mt-4 bg-black text-white py-2 rounded-xl hover:bg-[#EC407A] add-btn" data-id="${product.id}">
+                <button class="button small w-full mt-4 add-btn" data-id="${product.id}">
                     Agregar al carrito
                 </button>
             </div>

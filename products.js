@@ -1,7 +1,7 @@
 // products.js
 // ---------------------------------------------
 // Catálogo de productos actuales
-// Organización: Id, Nombre, Precio, Stock
+// Organización: Id, Nombre, Precio, Stock, Imagen, Descripción.
 // ---------------------------------------------
 
 export const products = [

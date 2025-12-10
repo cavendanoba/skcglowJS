@@ -58,6 +58,15 @@ export function cartTotal() {
     return cart.reduce((sum, p) => sum + p.price * p.quantity, 0);
 }
 
+// Actualizar el contador del carrito en el botón
+function updateCartCount() {
+    const cartCountBadge = document.getElementById("cartCount");
+    if (cartCountBadge) {
+        const totalItems = cart.reduce((sum, p) => sum + p.quantity, 0);
+        cartCountBadge.textContent = totalItems;
+    }
+}
+
 // Compatibilidad con `cart-view-js` y otras utilidades
 export function getCart() {
     return cart;
@@ -128,6 +137,9 @@ export function renderCart() {
             removeFromCart(id);
         }
     };
+
+    // Actualizar el contador en el botón del carrito
+    updateCartCount();
 }
 
 // =========================
