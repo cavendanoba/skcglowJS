@@ -57,8 +57,67 @@ python3 -m http.server 8000
 
 ## Despliegue
 
-- Opciones: Netlify, Vercel (Static), GitHub Pages.
-- Subir el repositorio y configurar el dominio/branch; con un sitio estático no se requiere build a menos que agregues herramientas.
+### Opción recomendada: Vercel con subdominio/ruta
+
+Para desplegar en `skaylabs.site/skcglow` usando Vercel:
+
+1. **Crear `vercel.json`** en la raíz del proyecto:
+
+```json
+{
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
+```
+
+2. **Pasos en Vercel:**
+   - Conecta tu repositorio (GitHub/GitLab/Bitbucket) a Vercel.
+   - En **Project Settings → Domains**, añade `skaylabs.site` como dominio personalizado.
+   - Configura una ruta: si quieres servir desde `/skcglow`, usa un proyecto separado en Vercel o configura rewrites en tu sitio principal.
+
+3. **Alternativa: Monorepo (recomendado para `/skcglow`):**
+   - En tu sitio principal (`skaylabs.site`), crea la carpeta `apps/skcglow/`.
+   - Mueve el contenido de este proyecto a esa carpeta.
+   - En `vercel.json` del sitio principal, configura:
+
+```json
+{
+  "rewrites": [
+    {
+      "source": "/skcglow/:path*",
+      "destination": "/apps/skcglow/:path*"
+    }
+  ]
+}
+```
+
+4. **Para servir localmente con la ruta `/skcglow`:**
+
+```bash
+# Usa un servidor que soporte rewrites
+npx vercel dev
+# O configura un simple-http-server con proxy
+python3 -m http.server 8000
+# Accede a http://localhost:8000/skcglow/ (requiere configuración del servidor)
+```
+
+### Otras opciones
+
+- **Netlify:** similar a Vercel; conecta el repositorio y usa el dominio personalizado.
+- **GitHub Pages:** soporta solo dominios en raíz o subdominios (github.io), requiere workflow personalizado.
+
+### Checklist pre-despliegue
+
+- [ ] Actualizar `index.html` si usas rutas relativas (verificar que no haya rutas absolutas `/`).
+- [ ] Comprimir imágenes con herramientas como `ImageOptim` o `TinyPNG`.
+- [ ] Probar en modo producción localmente.
+- [ ] Validar links y assets en la URL de producción.
 
 ## Rendimiento y buenas prácticas
 
